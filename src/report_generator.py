@@ -47,10 +47,29 @@ class ReportGenerator:
         with open(markdown_file_path, 'r') as file:
             markdown_content = file.read()
 
-        report = self.llm.generate_daily_report(markdown_content)  # 调用LLM生成报告
+        # 从文件名提取日期信息
+        file_name = os.path.basename(markdown_file_path)
+        date_str = os.path.splitext(file_name)[0].split('_')[-1]
+        
+        try:
+            # 尝试解析日期，如果是单个日期格式
+            report_date = date.fromisoformat(date_str)
+            date_range = f"{report_date}"
+        except ValueError:
+            # 如果不是标准日期格式，可能是日期范围
+            if "_to_" in file_name:
+                date_parts = file_name.split('_')
+                start_idx = date_parts.index('to') - 1
+                end_idx = date_parts.index('to') + 1
+                date_range = f"{date_parts[start_idx]}至{date_parts[end_idx]}"
+            else:
+                # 默认使用LLM的处理方式
+                date_range = None
+
+        report = self.llm.generate_daily_report(markdown_content, date_range=date_range)  # 传递日期范围
 
         report_file_path = os.path.splitext(markdown_file_path)[0] + "_report.md"
-        with open(report_file_path, 'w+') as report_file:
+        with open(report_file_path, 'w+', encoding='utf-8') as report_file:
             report_file.write(report)  # 写入生成的报告
 
         LOG.info(f"Generated report saved to {report_file_path}")  # 记录生成报告日志
@@ -63,14 +82,18 @@ class ReportGenerator:
         with open(markdown_file_path, 'r') as file:
             markdown_content = file.read()
 
-        report = self.llm.generate_daily_report(markdown_content)
+        # 计算日期范围
+        today = date.today()
+        since = today - timedelta(days=days)
+        date_range = f"{since}至{today}"
+
+        report = self.llm.generate_daily_report(markdown_content, date_range=date_range)
 
         report_file_path = os.path.splitext(markdown_file_path)[0] + f"_report.md"
-        with open(report_file_path, 'w+') as report_file:
+        with open(report_file_path, 'w+', encoding='utf-8') as report_file:
             report_file.write(report)
 
-
-        LOG.info(f"Generated report saved to {report_file_path}")  # 记录生成报告日志
+        LOG.info(f"Generated date range report saved to {report_file_path}")  # 记录生成报告日志
         
         return report, report_file_path
 
