@@ -2,6 +2,7 @@
 
 import requests
 import datetime
+import os  # 添加os模块导入
 
 class GitHubClient:
     def __init__(self, token):
@@ -40,6 +41,10 @@ class GitHubClient:
         date_str = datetime.datetime.now().strftime('%Y-%m-%d')
         issues = self.fetch_issues(repo)
         pull_requests = self.fetch_pull_requests(repo)
+        
+        # 确保daily_progress目录存在
+        os.makedirs('daily_progress', exist_ok=True)
+        
         filename = f'daily_progress/{repo.replace("/", "_")}_{date_str}.md'
         with open(filename, 'w') as f:
             f.write(f"# {repo} Daily Progress - {date_str}\n\n")

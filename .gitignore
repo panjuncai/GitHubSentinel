@@ -164,3 +164,5 @@ cython_debug/
 # User-defined
 daily_progress/*
  
+.idea/
+config.json
