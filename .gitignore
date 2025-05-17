@@ -165,4 +165,5 @@ cython_debug/
 daily_progress/*
  
 .idea/
-config.jsonconfig.json
+config.json
+config.json
