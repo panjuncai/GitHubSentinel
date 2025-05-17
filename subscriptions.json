@@ -1,5 +1,7 @@
 [
     "langchain-ai/langchain",
     "DjangoPeng/openai-quickstart",
-    "ollama/ollama"
+    "ollama/ollama",
+    "flutter/flutter",
+    "microsoft/vscode"
 ]
