@@ -12,13 +12,14 @@
     <br> English | <a href="README.md">中文</a>
 </p>
 
-GitHub Sentinel is an open-source tool AI Agent designed for developers and project managers. It automatically retrieves and aggregates updates from subscribed GitHub repositories on a regular basis (daily/weekly). Key features include subscription management, update retrieval, notification system, and report generation.
+GitHub Sentinel is an open-source tool AI Agent designed for developers and project managers. It automatically retrieves and aggregates updates from subscribed GitHub repositories on a regular basis (daily/weekly) and provides trending technology analysis from Hacker News. Key features include subscription management, update retrieval, notification system, report generation, and technology trend monitoring.
 
 ## Features
 - Subscription management
 - Update retrieval
 - Notification system
 - Report generation
+- Hacker News technology trend monitoring
 
 ## Getting Started
 
@@ -85,6 +86,12 @@ python src/command_tool.py
 
 In this mode, you can manually enter commands to manage subscriptions, retrieve updates, and generate reports.
 
+The command-line tool supports the following Hacker News related commands:
+- `hn-export` - Export today's trending Hacker News articles
+- `hn-export-range [days]` - Export trending Hacker News articles within the specified number of days
+- `hn-generate` - Generate today's Hacker News trend analysis report
+- `hn-generate-range [days]` - Generate Hacker News trend analysis report for the specified number of days
+
 #### B. Run as a Background Service
 
 To run the application as a background service (daemon), it will automatically update according to the configured schedule.
@@ -100,6 +107,7 @@ You can use the daemon management script [daemon_control.sh](daemon_control.sh) 
     ```
 
    - This will launch [./src/daemon_process.py], generating reports periodically as set in `config.json`, and sending emails.
+   - The system will automatically generate both GitHub project update reports and Hacker News technology trend reports.
    - Service logs will be saved to `logs/DaemonProcess.log`, with historical logs also appended to `logs/app.log`.
 
 2. Check the service status:
@@ -138,20 +146,10 @@ python src/gradio_server.py
 ![gradio_demo](images/gradio_demo.png)
 
 - This will start a web server on your machine, allowing you to manage subscriptions and generate reports through a user-friendly interface.
+- The web interface includes two tabs:
+  - **GitHub Project Reports**: Manage subscriptions and generate GitHub project update reports
+  - **Hacker News Trends**: Generate technology trend analysis reports
 - By default, the Gradio server will be accessible at `http://localhost:7860`, but you can share it publicly if needed.
 
-## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated. If you have any suggestions or feature requests, please open an issue first to discuss what you would like to change.
-
-<a href='https://github.com/repo-reviews/repo-reviews.github.io/blob/main/create.md' target="_blank"><img alt='Github' src='https://img.shields.io/badge/review_me-100000?style=flat&logo=Github&logoColor=white&labelColor=888888&color=555555'/></a>
-
-## License
-
-This project is licensed under the terms of the Apache-2.0 License . See the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-Django Peng - pjt73651@email.com
-
-Project Link: https://github.com/DjangoPeng/GitHubSentinel
+#### D. Preview
+![Hacker news report](pics/hacker_news_reports_preview.jpg.png)

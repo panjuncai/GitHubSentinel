@@ -12,13 +12,14 @@
     <br> <a href="README-EN.md">English</a> | 中文
 </p>
 
-GitHub Sentinel 是一个开源的工具 AI 代理，专为开发人员和项目经理设计。它会定期（每日/每周）自动从订阅的 GitHub 仓库中检索和汇总更新。主要功能包括订阅管理、更新检索、通知系统和报告生成。
+GitHub Sentinel 是一个开源的工具 AI 代理，专为开发人员和项目经理设计。它会定期（每日/每周）自动从订阅的 GitHub 仓库中检索和汇总更新，并提供 Hacker News 热门技术趋势分析。主要功能包括订阅管理、更新检索、通知系统、报告生成和技术趋势监控。
 
 ## 功能
 - 订阅管理
 - 更新检索
 - 通知系统
 - 报告生成
+- Hacker News 技术趋势监控
 
 ## 快速开始
 
@@ -86,6 +87,12 @@ python src/command_tool.py
 
 在此模式下，您可以手动输入命令来管理订阅、检索更新和生成报告。
 
+命令行工具支持以下 Hacker News 相关命令：
+- `hn-export` - 导出当天 Hacker News 热门文章
+- `hn-export-range [days]` - 导出指定天数内的 Hacker News 热门文章
+- `hn-generate` - 生成当天 Hacker News 趋势分析报告
+- `hn-generate-range [days]` - 生成指定天数内的 Hacker News 趋势分析报告
+
 #### B. 作为后台服务运行
 
 要将该应用作为后台服务（守护进程）运行，它将根据相关配置定期自动更新。
@@ -101,6 +108,7 @@ python src/command_tool.py
     ```
 
    - 这将启动[./src/daemon_process.py]，按照 `config.json` 中设置的更新频率和时间点定期生成报告，并发送邮件。
+   - 系统会自动生成 GitHub 项目更新报告和 Hacker News 技术趋势报告。
    - 本次服务日志将保存到 `logs/DaemonProcess.log` 文件中。同时，历史累计日志也将同步追加到 `logs/app.log` 日志文件中。
 
 2. 查询服务状态：
@@ -139,21 +147,10 @@ python src/gradio_server.py
 ![gradio_demo](images/gradio_demo.png)
 
 - 这将在您的机器上启动一个 Web 服务器，允许您通过用户友好的界面管理订阅和生成报告。
+- Web 界面包含两个选项卡：
+  - **GitHub项目报告**：管理订阅并生成 GitHub 项目更新报告
+  - **Hacker News趋势**：生成技术趋势分析报告
 - 默认情况下，Gradio 服务器将可在 `http://localhost:7860` 访问，但如果需要，您可以公开共享它。
 
-## 贡献
-
-贡献是使开源社区成为学习、激励和创造的惊人之处。非常感谢你所做的任何贡献。如果你有任何建议或功能请求，请先开启一个议题讨论你想要改变的内容。
-
-<a href='https://github.com/repo-reviews/repo-reviews.github.io/blob/main/create.md' target="_blank"><img alt='Github' src='https://img.shields.io/badge/review_me-100000?style=flat&logo=Github&logoColor=white&labelColor=888888&color=555555'/></a>
-
-## 许可证
-
-该项目根据Apache-2.0许可证的条款进行许可。详情请参见[LICENSE](LICENSE)文件。
-
-## 联系
-
-Django Peng - pjt73651@email.com
-
-项目链接: https://github.com/DjangoPeng/GitHubSentinel
-
+#### D. 预览
+![Hacker News Report](pics/hacker_news_reports_preview.jpg.png)

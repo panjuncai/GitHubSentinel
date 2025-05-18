@@ -23,17 +23,14 @@ class LLM:
         with open("prompts/report_prompt.txt", "r", encoding='utf-8') as file:
             self.system_prompt = file.read()
 
-    def generate_daily_report(self, markdown_content, dry_run=False):
-        """
-        生成每日报告，根据配置选择不同的模型来处理请求。
-        
-        :param markdown_content: 用户提供的Markdown内容。
-        :param dry_run: 如果为True，提示信息将保存到文件而不实际调用模型。
-        :return: 生成的报告内容或"DRY RUN"字符串。
-        """
-        # 准备消息列表，包含系统提示和用户内容
+    def generate_daily_report(self, markdown_content, dry_run=False,system_prompt=None):
+        # 使用从TXT文件加载的提示信息
+        if system_prompt:
+            system_prompt = system_prompt
+        else:
+            system_prompt = self.system_prompt
         messages = [
-            {"role": "system", "content": self.system_prompt},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": markdown_content},
         ]
 
