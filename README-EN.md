@@ -153,3 +153,6 @@ python src/gradio_server.py
 
 #### D. Preview
 ![Hacker news report](pics/hacker_news_reports_preview.jpg.png)
+
+#### F. Ollama Generate Report Preview
+![Ollama Report](pics/ollama-report.png)

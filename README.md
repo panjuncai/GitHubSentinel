@@ -154,3 +154,6 @@ python src/gradio_server.py
 
 #### D. 预览
 ![Hacker News Report](pics/hacker_news_reports_preview.jpg.png)
+
+#### F. 使用Ollama本地调用预览
+![Ollama Report](pics/ollama-report.png)
