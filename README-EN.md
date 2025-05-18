@@ -67,6 +67,9 @@ GitHub Sentinel not only helps users automatically track and analyze the progres
 
 ![gradio_v0.8_hn](images/gradio_v0.8_hn.png)
 
+**Website Analyze**
+![Website Preview](images/website_analyze.png)
+
 ## Quick Start
 
 ### 1. Install Dependencies
