@@ -76,6 +76,29 @@ class ReportGenerator:
         LOG.info(f"Hacker News 每日汇总报告已保存到 {report_file_path}")
         return report, report_file_path
 
+    def generate_website_report(self, article_path):
+        """生成网站文章的分析报告"""
+        try:
+            # 读取原始文章内容
+            with open(article_path, "r", encoding="utf-8") as f:
+                article_content = f.read()
+            
+            # 提取标题
+            title = os.path.basename(article_path).replace("_原文.md", "")
+            
+            # 使用LLM生成分析报告
+            system_prompt = self.prompts.get("website")
+            report = self.llm.generate_report(system_prompt, article_content)
+            
+            # 保存分析报告
+            report_file_path = article_path.replace("_原文.md", "_分析报告.md")
+            with open(report_file_path, "w", encoding="utf-8") as f:
+                f.write(report)
+            
+            return report, report_file_path
+        except Exception as e:
+            LOG.error(f"生成网站文章分析报告失败: {str(e)}")
+            raise
 
     def _aggregate_topic_reports(self, directory_path):
         """

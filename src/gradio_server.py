@@ -7,6 +7,7 @@ from report_generator import ReportGenerator  # 导入报告生成器模块
 from llm import LLM  # 导入可能用于处理语言模型的LLM类
 from subscription_manager import SubscriptionManager  # 导入订阅管理器
 from logger import LOG  # 导入日志记录器
+from website_client import WebsiteClient  # 导入网站客户端
 
 # 创建各个组件的实例
 config = Config()
@@ -47,13 +48,30 @@ def generate_hn_hour_topic(model_type, model_name):
 
     return report, report_file_path  # 返回报告内容和报告文件路径
 
+def analyze_website(model_type, model_name, website_url):
+    config.llm_model_type = model_type
+
+    if model_type == "openai":
+        config.openai_model_name = model_name
+    else:
+        config.ollama_model_name = model_name
+
+    llm = LLM(config)
+    report_generator = ReportGenerator(llm, config.report_types)
+    
+    website_client = WebsiteClient()
+    article_path, title = website_client.fetch_article(website_url)
+    
+    report, report_file_path = report_generator.generate_website_report(article_path)
+    
+    return report, report_file_path
 
 # 定义一个回调函数，用于根据 Radio 组件的选择返回不同的 Dropdown 选项
 def update_model_list(model_type):
     if model_type == "openai":
         return gr.Dropdown(choices=["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo"], label="选择模型")
     elif model_type == "ollama":
-        return gr.Dropdown(choices=["llama3.1", "gemma3:1b", "qwen2:7b"], label="选择模型")
+        return gr.Dropdown(choices=["gemma3:1b","llama3.1",  "qwen2:7b"], label="选择模型")
 
 
 # 创建 Gradio 界面
@@ -109,6 +127,32 @@ with gr.Blocks(title="GitHubSentinel") as demo:
 
         # 将按钮点击事件与导出函数绑定
         button.click(generate_hn_hour_topic, inputs=[model_type, model_name,], outputs=[markdown_output, file_output])
+
+    # 创建网站文章分析 Tab
+    with gr.Tab("网站文章分析"):
+        gr.Markdown("## 网站文章分析")  # 添加小标题
+
+        # 创建 Radio 组件
+        model_type = gr.Radio(["openai", "ollama"], label="模型类型", info="使用 OpenAI GPT API 或 Ollama 私有化模型服务")
+
+        # 创建 Dropdown 组件
+        model_name = gr.Dropdown(choices=["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo"], label="选择模型")
+
+        # 创建文本输入框用于输入URL
+        website_url = gr.Textbox(label="网站链接", placeholder="请输入要分析的网站URL，例如：https://example.com/article")
+
+        # 使用 radio 组件的值来更新 dropdown 组件的选项
+        model_type.change(fn=update_model_list, inputs=model_type, outputs=model_name)
+
+        # 创建按钮来生成报告
+        button = gr.Button("生成文章分析报告")
+
+        # 设置输出组件
+        markdown_output = gr.Markdown()
+        file_output = gr.File(label="下载报告")
+
+        # 将按钮点击事件与分析函数绑定
+        button.click(analyze_website, inputs=[model_type, model_name, website_url], outputs=[markdown_output, file_output])
 
 
 
