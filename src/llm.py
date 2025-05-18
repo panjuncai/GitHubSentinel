@@ -11,10 +11,14 @@ class LLM:
         with open("prompts/report_prompt.txt", "r", encoding='utf-8') as file:
             self.system_prompt = file.read()
 
-    def generate_daily_report(self, markdown_content, dry_run=False):
+    def generate_daily_report(self, markdown_content, dry_run=False,system_prompt=None):
         # 使用从TXT文件加载的提示信息
+        if system_prompt:
+            system_prompt = system_prompt
+        else:
+            system_prompt = self.system_prompt
         messages = [
-            {"role": "system", "content": self.system_prompt},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": markdown_content},
         ]
 

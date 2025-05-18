@@ -5,11 +5,12 @@ import argparse
 import argparse  # 导入argparse库，用于处理命令行参数解析
 
 class CommandHandler:
-    def __init__(self, github_client, subscription_manager, report_generator):
+    def __init__(self, github_client, subscription_manager, report_generator, hacker_news_report_generator=None):
         # 初始化CommandHandler，接收GitHub客户端、订阅管理器和报告生成器
         self.github_client = github_client
         self.subscription_manager = subscription_manager
         self.report_generator = report_generator
+        self.hacker_news_report_generator = hacker_news_report_generator
         self.parser = self.create_parser()  # 创建命令行解析器
 
     def create_parser(self):
@@ -50,6 +51,26 @@ class CommandHandler:
         parser_generate.add_argument('file', type=str, help='The markdown file to generate report from')
         parser_generate.set_defaults(func=self.generate_daily_report)
 
+        # Hacker News命令组
+        if self.hacker_news_report_generator:
+            # 导出Hacker News每日热门内容命令
+            parser_hn_export = subparsers.add_parser('hn-export', help='Export daily Hacker News trends')
+            parser_hn_export.set_defaults(func=self.export_hackernews_daily)
+            
+            # 导出Hacker News特定日期范围热门内容命令
+            parser_hn_export_range = subparsers.add_parser('hn-export-range', help='Export Hacker News trends over a range of days')
+            parser_hn_export_range.add_argument('days', type=int, help='The number of days to export trends for')
+            parser_hn_export_range.set_defaults(func=self.export_hackernews_by_date_range)
+            
+            # 生成Hacker News趋势分析报告命令
+            parser_hn_generate = subparsers.add_parser('hn-generate', help='Generate Hacker News trends analysis report')
+            parser_hn_generate.set_defaults(func=self.generate_hackernews_report)
+            
+            # 生成Hacker News特定日期范围趋势分析报告命令
+            parser_hn_generate_range = subparsers.add_parser('hn-generate-range', help='Generate Hacker News trends analysis report for a range of days')
+            parser_hn_generate_range.add_argument('days', type=int, help='The number of days to generate report for')
+            parser_hn_generate_range.set_defaults(func=self.generate_hackernews_report_by_date_range)
+
         # 帮助命令
         parser_help = subparsers.add_parser('help', help='Show help message')
         parser_help.set_defaults(func=self.print_help)
@@ -82,6 +103,41 @@ class CommandHandler:
     def generate_daily_report(self, args):
         self.report_generator.generate_daily_report(args.file)
         print(f"Generated daily report from file: {args.file}")
+        
+    # Hacker News相关命令实现
+    def export_hackernews_daily(self, args):
+        if not self.hacker_news_report_generator:
+            print("Hacker News功能未启用")
+            return
+        
+        client = self.hacker_news_report_generator.client
+        file_path = client.export_daily_trends()
+        print(f"导出Hacker News每日热门内容: {file_path}")
+    
+    def export_hackernews_by_date_range(self, args):
+        if not self.hacker_news_report_generator:
+            print("Hacker News功能未启用")
+            return
+        
+        client = self.hacker_news_report_generator.client
+        file_path = client.export_trends_by_date_range(args.days)
+        print(f"导出Hacker News最近{args.days}天热门内容: {file_path}")
+    
+    def generate_hackernews_report(self, args):
+        if not self.hacker_news_report_generator:
+            print("Hacker News功能未启用")
+            return
+        
+        report, file_path = self.hacker_news_report_generator.generate_daily_report()
+        print(f"生成Hacker News趋势分析报告: {file_path}")
+    
+    def generate_hackernews_report_by_date_range(self, args):
+        if not self.hacker_news_report_generator:
+            print("Hacker News功能未启用")
+            return
+        
+        report, file_path = self.hacker_news_report_generator.generate_report_by_date_range(args.days)
+        print(f"生成Hacker News {args.days}天趋势分析报告: {file_path}")
 
     def print_help(self, args=None):
         self.parser.print_help()  # 输出帮助信息
