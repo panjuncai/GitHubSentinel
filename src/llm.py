@@ -77,8 +77,14 @@ class LLM:
                 "stream": False
             }
 
-            response = requests.post(self.api_url, json=payload)  # 发送POST请求到Ollama API
+            # 创建一个新的session并显式禁用所有代理
+            session = requests.Session()
+            session.proxies.clear()
+            session.trust_env = False  # 不使用环境变量中的代理设置
+            
+            response = session.post(self.api_url, json=payload)
             response_data = response.json()
+            
 
             # 调试输出查看完整的响应结构
             LOG.debug("Ollama 响应: {}", response_data)
