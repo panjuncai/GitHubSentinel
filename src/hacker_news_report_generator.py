@@ -52,7 +52,7 @@ class HackerNewsReportGenerator:
         today = date.today()
         since = today - timedelta(days=days)
         prompt = f"{template}"
-        report = self.llm.generate_daily_report(markdown_content=f"{since}至{today}的Hacker News热门文章:\n{stories_text}",dry_run=True,system_prompt=prompt)
+        report = self.llm.generate_daily_report(markdown_content=f"{since}至{today}的Hacker News热门文章:\n{stories_text}",dry_run=False,system_prompt=prompt)
         
         # 保存报告
         report_file_path = os.path.splitext(markdown_file_path)[0] + "_analysis.md"
